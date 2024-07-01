@@ -45,7 +45,7 @@ A **Chat app** which mainly focuses on **privacy** and **enjoyments** and also i
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/r0ld3x/chatflix/assets/77254818/d6dbc62f-4b0e-40c6-89be-41717cf28f96)
 
 ## Authors
 

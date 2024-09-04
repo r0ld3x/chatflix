@@ -7,10 +7,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from chat.pagination import MyCustomPagination
 from room.models import ChatRoom, JoinRoom
 
-from .serializers import (ChatRoomCreateSerializer, ChatRoomDetailSerializer,
-                          ChatRoomListSerializer)
+from .serializers import (
+    ChatRoomCreateSerializer,
+    ChatRoomDetailSerializer,
+    ChatRoomListSerializer,
+    UserSerializer,
+)
 
 
 class ChatRoomAPIView(APIView):
@@ -26,7 +31,6 @@ class ChatRoomAPIView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
             serializer = ChatRoomDetailSerializer(joined_chat_rooms, many=True)
-
             return Response(serializer.data)
         try:
             chat_room = ChatRoom.objects.get(username=username)
@@ -174,11 +178,47 @@ def create_join_link(request, username, *args, **kwargs):
         unique_identifier = "".join(
             random.choice(string.ascii_letters + string.digits) for _ in range(10)
         )
-        join_room = JoinRoom.objects.create(chat_room=chat_room, unique_identifier=unique_identifier)
+        join_room = JoinRoom.objects.create(
+            chat_room=chat_room, unique_identifier=unique_identifier
+        )
         if not join_room:
             return Response({"error": "This operation has failed."}, status=401)
     else:
         join_room = is_exist.first()
     join_url = reverse("join_room", args=[join_room.unique_identifier])
     join_link = request.build_absolute_uri(join_url)
-    return Response({"join_link": join_link, "identifier": join_room.unique_identifier}, status=200)
+    return Response(
+        {"join_link": join_link, "identifier": join_room.unique_identifier}, status=200
+    )
+
+
+class GetMembersPagination(APIView):
+    pagination_class = MyCustomPagination
+
+    def get(
+        self,
+        request,
+    ):
+        username = self.request.query_params.get("username")
+        try:
+            chat_room = ChatRoom.objects.get(username=username)
+        except ChatRoom.DoesNotExist:
+            return Response(
+                {"error": "Chat room not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not chat_room.is_participant(request.user):
+            return Response(
+                {"error": "This chat room is not joined by you."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        paginator = self.pagination_class()
+        participants = chat_room.participants.all()
+        paginated_participants = paginator.paginate_queryset(participants, request)
+        serializer = UserSerializer(
+            paginated_participants, many=True, context={"request": request}
+        )
+
+        return paginator.get_paginated_response(serializer.data)

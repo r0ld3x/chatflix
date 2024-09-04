@@ -12,15 +12,18 @@ export default async function Home() {
 
   const api = getApiClient(session);
   let data = api.chat.getAllJoinedChats();
+
   return (
-    <div className="px-2  ">
-      <div className="flex gap-2">
+    <div className="flex max-h-full min-h-full ">
+      <section className="w-1/4 p-1 flex flex-col h-full">
         <Await promises={[data]}>{(data) => <ChatWrapper data={data} />}</Await>
-        <section className="flex-[5]">
-          <Await promises={[]}>{() => <MessageWrapper />}</Await>
-        </section>
+      </section>
+      <section className="flex-1 p-1 flex flex-col h-full">
+        <Await promises={[]}>{() => <MessageWrapper />}</Await>
+      </section>
+      <section className="w-1/4 p-1 flex flex-col h-full">
         <InformationWrapper />
-      </div>
+      </section>
     </div>
   );
 }

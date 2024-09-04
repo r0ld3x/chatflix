@@ -45,25 +45,13 @@ export class ChatsService {
     username: string;
     pageParam: number;
     page_size?: number;
-  }): Promise<getMessages | false> {
-    console.log(pageParam);
-    try {
-      const result: AxiosResponse<getMessages> = await this.axios.get(
-        "/chat/messages/",
-        {
-          params: {
-            username,
-            page: pageParam !== 0 ? pageParam : 1,
-            page_size,
-          },
-        }
-      );
-      if (!result || !result.data) {
-        return false;
-      }
-      return result.data;
-    } catch (error) {
-      return false;
-    }
+  }): Promise<AxiosResponse<getMessages>> {
+    return await this.axios.get("/chat/messages/", {
+      params: {
+        username,
+        page: pageParam !== 0 ? pageParam : 1,
+        page_size,
+      },
+    });
   }
 }

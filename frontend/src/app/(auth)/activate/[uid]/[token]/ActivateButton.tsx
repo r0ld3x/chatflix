@@ -1,5 +1,5 @@
 "use client";
-import { showErrorToast, showWarningToast } from "@/components/ShowToast";
+import { showErrorToast, showSuccessToast } from "@/components/ShowToast";
 import { getApiClient } from "@/lib/api";
 import { titleize } from "@/lib/helper";
 import { ApiError } from "@/types/api";
@@ -28,7 +28,7 @@ const ActivateButton = ({ uid, token }: { uid: string; token: string }) => {
       }
     },
     onSuccess: async (res) => {
-      showWarningToast("Account activated successfully. Please login now!");
+      showSuccessToast("Account activated successfully. Please login now!");
       setTimeout(() => {
         window.location.href = "/login";
       }, 2000);

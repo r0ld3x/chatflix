@@ -1,17 +1,16 @@
-import { showErrorToast, showWarningToast } from "@/components/ShowToast";
+import { showWarningToast } from "@/components/ShowToast";
 import { getApiClient } from "@/lib/api";
 import { getAccessToken } from "@/lib/helper";
-import { getMessages } from "@/types/api/models/ChatTypes";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 export type RecieveMessage = {
-  status: "success" | "fail";
   id: number;
-  message: string;
+  likes_count: number;
+  content: string;
   created: string;
-  user: {
+  sender: {
     full_name: string;
     profile_pic: string | null;
     username: string;
@@ -60,7 +59,7 @@ export const SocketContextProvider = ({ roomUsername, children }: Props) => {
       queryParams: {
         token: getAccessToken() ?? "",
       },
-      onClose(event) {
+      onClose() {
         setIsOpen(false);
         setIsLoading(true);
         // router.refresh();
@@ -77,26 +76,13 @@ export const SocketContextProvider = ({ roomUsername, children }: Props) => {
     }
   );
 
-  interface Users {
-    id: number;
-    name: string;
-  }
-
-  interface UserQuery {
-    pageSize: number;
-  }
-
   const {
-    status,
     data,
     error,
     isFetching,
     isFetchingNextPage,
-    isFetchingPreviousPage,
     fetchNextPage,
-    fetchPreviousPage,
     hasNextPage,
-    hasPreviousPage,
   } = useInfiniteQuery({
     queryKey: ["messages"],
     queryFn: async ({ pageParam }) => {
@@ -108,14 +94,13 @@ export const SocketContextProvider = ({ roomUsername, children }: Props) => {
         page_size: 10,
       });
       if (!res) {
-        console.log("res: ", res);
         showWarningToast("Old Messages Failed to Load");
         return null;
       }
-      return res;
+      return res.data;
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (lastPage) => {
       if (!lastPage) return undefined;
       return lastPage.current_page < lastPage.total_pages
         ? lastPage?.current_page + 1
@@ -140,6 +125,7 @@ export const SocketContextProvider = ({ roomUsername, children }: Props) => {
   useEffect(() => {
     setState(readyState);
   }, [readyState]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
@@ -147,37 +133,25 @@ export const SocketContextProvider = ({ roomUsername, children }: Props) => {
   };
 
   useEffect(() => {
-    document.title = roomUsername ?? "ChatFlux";
+    document.title = roomUsername ?? "ChatFlix";
   }, [roomUsername]);
 
   useEffect(() => {
     if (!data) return;
-    const msgs = data.pages as unknown as getMessages[];
-    if (msgs.length > 0) {
-      console.log("msgs: ", msgs);
-      // showErrorToast("Old Messages Failed to Load");
-    }
-    msgs.map(({ results }) => {
-      return results.reverse().map(({ content, created, id, sender }) => {
-        setMessages((prevMessages) => {
-          const exists = prevMessages.some((msg) => msg.id === id);
+    const msgs = data.pages;
 
-          if (!exists) {
-            return [
-              ...prevMessages,
-              {
-                created: created,
-                id: id,
-                message: content,
-                status: "success",
-                user: sender,
-              },
-            ];
-          }
-          return prevMessages;
-        });
-      });
+    if (!msgs || msgs.length === 0) return;
+
+    const flattenedResults = msgs.flatMap((page) =>
+      page ? page.results : undefined
+    );
+
+    const sortedResults = flattenedResults.toSorted((a, b) => {
+      if (!a || !b) return 0;
+      return a.id - b.id;
     });
+    const validResults = sortedResults.filter((result) => result !== undefined);
+    setMessages(validResults);
   }, [data]);
 
   const addMessage = () => {

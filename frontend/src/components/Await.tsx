@@ -11,5 +11,6 @@ export default async function Await<T extends Promise<any>[]>({
   children,
 }: AwaitProps<T>) {
   const data = await Promise.all(promises);
+
   return children(...(data as any));
 }

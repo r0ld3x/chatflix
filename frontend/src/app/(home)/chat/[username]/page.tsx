@@ -19,20 +19,23 @@ export default async function Home({
   let data = api.chat.getAllJoinedChats();
   var roomInfo: getRoomInformation | false = false;
   try {
-    const fetch = await api.room.getRoomInformation({ username });
+    const fetch = await api.room.getInformation({ username });
     roomInfo = fetch.data;
   } catch (error) {
     roomInfo = false;
   }
+
   return (
-    <div className="px-2">
-      <div className="flex gap-2">
+    <div className="flex max-h-full min-h-full">
+      <section className="w-1/4 flex flex-col h-full border-r border-gray-300">
         <Await promises={[data]}>{(data) => <ChatWrapper data={data} />}</Await>
-        <section className="flex-[5]">
-          <Messages username={username} />
-        </section>
+      </section>
+      <section className="flex-1 flex flex-col h-full border-r border-gray-300">
+        <Messages username={username} />
+      </section>
+      <section className="w-1/4 flex flex-col h-full">
         <InformationWrapper />
-      </div>
+      </section>
     </div>
   );
 }

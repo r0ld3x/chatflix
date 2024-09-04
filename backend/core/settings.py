@@ -54,6 +54,7 @@ INSTALLED_APPS += [
 
 
 MIDDLEWARE = [
+    "core.middleware.JsonResponseErrorMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -148,10 +149,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "chat.pagination.MyCustomPagination",
     "PAGE_SIZE": 10,
 }
-
 SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
 }
 
@@ -174,14 +174,14 @@ DJOSER = {
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = os.environ.get("EMAIL_PORT")
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_HOST = "smtp.resend.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "resend"
+EMAIL_HOST_PASSWORD = ""  #
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+DEFAULT_FROM_EMAIL = ""
 
-SITE_NAME = os.environ.get("SITE_NAME")
+SITE_NAME = "Chatflix"
 
 
 AUTH_USER_MODEL = "user.User"
@@ -206,14 +206,13 @@ AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24 * 10
 AUTH_COOKIE_SECURE = False
 AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_PATH = "/"
-AUTH_COOKIE_SAMESITE = None
+AUTH_COOKIE_SAMESITE = "None"
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = "profile_pics/"
 
-# Define the STATIC_ROOT directory where Django will collect static files during deployment.
 STATIC_ROOT = os.path.join(os.path.dirname(__file__), "profile_pics")
 
 STATICFILES_DIRS = [
@@ -227,8 +226,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(os.environ.get("REDIS_HOST"), int(os.environ.get("REDIS_PORT")))],
-            'PASSWORD': os.environ.get("REDIS_PASSWORD") or None,
+            "hosts": [("localhost", 6379)],
         },
     },
 }

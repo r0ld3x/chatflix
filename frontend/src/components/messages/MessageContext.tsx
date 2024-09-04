@@ -2,7 +2,6 @@
 import { getRoomInformation } from "@/types/api/models/RoomTypes";
 import { createContext, ReactNode, useState } from "react";
 
-// Define the types of your context
 export type MessageContextType = {
   data: getRoomInformation | null;
   isLoading: boolean;

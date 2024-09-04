@@ -24,8 +24,10 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   if (!user) return redirect("/login");
 
   return (
-    <main>
-      <NavBar user={user} />
+    <main className="h-screen max-h-screen min-h-screen flex flex-col ">
+      <div className="flex-shrink-0">
+        <NavBar user={user} />
+      </div>
       <MessageContextProvider>{children}</MessageContextProvider>
     </main>
   );

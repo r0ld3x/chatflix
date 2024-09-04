@@ -29,7 +29,7 @@ const CreateRoomDialog = ({
   const [profilePic, setProfilePic] = useState<File | undefined>(undefined);
   const [ppUrl, setPpUrl] = useState("");
 
-  const { isPending, isSuccess, mutate } = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationFn: async ({
       name,
       username,
@@ -80,9 +80,7 @@ const CreateRoomDialog = ({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1 font-poppins tracking-wide">
-                <>
-                  <h2>Create Your Own Chat Room</h2>
-                </>
+                <h2>Create Your Own Chat Room</h2>
               </ModalHeader>
               <Divider className="" />
               <ModalBody>

@@ -14,3 +14,19 @@ export type RoomCreator = {
   full_name: string;
   profile_pic: string | null;
 };
+
+export type getMembers = {
+  next: string;
+  previous: string;
+  total_count: number;
+  total_pages: number;
+  current_page: number;
+  page_size: number;
+  results: User[];
+};
+
+export type User = {
+  username: string;
+  full_name: string;
+  profile_pic: null;
+};

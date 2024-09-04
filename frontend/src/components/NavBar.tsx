@@ -4,7 +4,7 @@ import NavBarProfile from "./NavBarProfile";
 
 const NavBar = ({ user }: { user: RetrieveUserResponse }) => {
   return (
-    <Navbar isBordered>
+    <Navbar isBordered className="flex-shrink-0  border-b-1 border-white">
       <NavbarBrand>
         <Link className="font-bold text-inherit" href="/">
           CHATFLIX

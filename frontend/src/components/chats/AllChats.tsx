@@ -1,112 +1,194 @@
-import { getApiClient } from "@/lib/api";
-import { getAccessToken, titleize } from "@/lib/helper";
-import { ApiError } from "@/types/api";
-import { Avatar, Card } from "@nextui-org/react";
-import { useMutation } from "@tanstack/react-query";
-import TimeAgo from "javascript-time-ago";
-import en from "javascript-time-ago/locale/en";
-import { useContext, useEffect } from "react";
-import { showErrorToast } from "../ShowToast";
-import { MessageContext } from "../messages/MessageContext";
+import { Card } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
 import { ContextType } from "./ChatContext";
-
-TimeAgo.addDefaultLocale(en);
+import DisplayChat from "./DisplayChat";
 
 const AllChats = ({ data }: { data: ContextType["data"] }) => {
-  const { setData, setIsLoading } = useContext(MessageContext);
+  const nd = [
+    {
+      name: "Alice",
+      avatar: "http://example.com/avatars/alice.png",
+      lastMessage: "Hey there!",
+      username: "alice123",
+      time: new Date("2024-08-23T10:00:00Z"),
+    },
+    {
+      name: "Bob",
+      avatar: "http://example.com/avatars/bob.png",
+      lastMessage: "Good morning!",
+      username: "bob456",
+      time: new Date("2024-08-23T10:15:30Z"),
+    },
+    {
+      name: "Charlie",
+      avatar: "http://example.com/avatars/charlie.png",
+      lastMessage: "Are you free today?",
+      username: "charlie789",
+      time: new Date("2024-08-23T11:00:00Z"),
+    },
+    {
+      name: "David",
+      avatar: "http://example.com/avatars/david.png",
+      lastMessage: "Let's catch up soon.",
+      username: "david101",
+      time: new Date("2024-08-23T12:30:45Z"),
+    },
+    {
+      name: "Eva",
+      avatar: "http://example.com/avatars/eva.png",
+      lastMessage: "Looking forward to it!",
+      username: "eva202",
+      time: new Date("2024-08-23T13:20:30Z"),
+    },
+    {
+      name: "Frank",
+      avatar: "http://example.com/avatars/frank.png",
+      lastMessage: "I'll call you later.",
+      username: "frank303",
+      time: new Date("2024-08-23T14:45:00Z"),
+    },
+    {
+      name: "Grace",
+      avatar: "http://example.com/avatars/grace.png",
+      lastMessage: "Thanks for your help!",
+      username: "grace404",
+      time: new Date("2024-08-23T15:15:30Z"),
+    },
+    {
+      name: "Hannah",
+      avatar: "http://example.com/avatars/hannah.png",
+      lastMessage: "See you soon!",
+      username: "hannah505",
+      time: new Date("2024-08-23T16:00:00Z"),
+    },
+    {
+      name: "Ivy",
+      avatar: "http://example.com/avatars/ivy.png",
+      lastMessage: "Can you send me that file?",
+      username: "ivy606",
+      time: new Date("2024-08-23T17:30:15Z"),
+    },
+    {
+      name: "Jack",
+      avatar: "http://example.com/avatars/jack.png",
+      lastMessage: "Check out this link.",
+      username: "jack707",
+      time: new Date("2024-08-23T18:00:00Z"),
+    },
+    {
+      name: "Kara",
+      avatar: "http://example.com/avatars/kara.png",
+      lastMessage: "Great job today!",
+      username: "kara808",
+      time: new Date("2024-08-23T19:10:45Z"),
+    },
+    {
+      name: "Liam",
+      avatar: "http://example.com/avatars/liam.png",
+      lastMessage: "Are we still on for lunch?",
+      username: "liam909",
+      time: new Date("2024-08-23T20:00:00Z"),
+    },
+    {
+      name: "Mia",
+      avatar: "http://example.com/avatars/mia.png",
+      lastMessage: "I’ll be there in 10 minutes.",
+      username: "mia1010",
+      time: new Date("2024-08-23T21:30:15Z"),
+    },
+    {
+      name: "Nate",
+      avatar: "http://example.com/avatars/nate.png",
+      lastMessage: "Got your message, thanks!",
+      username: "nate1111",
+      time: new Date("2024-08-23T22:15:00Z"),
+    },
+    {
+      name: "Olivia",
+      avatar: "http://example.com/avatars/olivia.png",
+      lastMessage: "How was the event?",
+      username: "olivia1212",
+      time: new Date("2024-08-23T23:00:00Z"),
+    },
+    {
+      name: "Paul",
+      avatar: "http://example.com/avatars/paul.png",
+      lastMessage: "I'll meet you at the usual place.",
+      username: "paul1313",
+      time: new Date("2024-08-24T08:00:00Z"),
+    },
+    {
+      name: "Quinn",
+      avatar: "http://example.com/avatars/quinn.png",
+      lastMessage: "Thanks for the update.",
+      username: "quinn1414",
+      time: new Date("2024-08-24T09:00:00Z"),
+    },
+    {
+      name: "Riley",
+      avatar: "http://example.com/avatars/riley.png",
+      lastMessage: "Let's review the plans tomorrow.",
+      username: "riley1515",
+      time: new Date("2024-08-24T10:15:30Z"),
+    },
+    {
+      name: "Sarah",
+      avatar: "http://example.com/avatars/sarah.png",
+      lastMessage: "I’m running late.",
+      username: "sarah1616",
+      time: new Date("2024-08-24T11:00:00Z"),
+    },
+    {
+      name: "Tom",
+      avatar: "http://example.com/avatars/tom.png",
+      lastMessage: "Here’s the document you requested.",
+      username: "tom1717",
+      time: new Date("2024-08-24T12:30:00Z"),
+    },
+    {
+      name: "Uma",
+      avatar: "http://example.com/avatars/uma.png",
+      lastMessage: "Can you review this?",
+      username: "uma1818",
+      time: new Date("2024-08-24T13:20:15Z"),
+    },
+    {
+      name: "Vera",
+      avatar: "http://example.com/avatars/vera.png",
+      lastMessage: "Let’s discuss this further.",
+      username: "vera1919",
+      time: new Date("2024-08-24T14:00:00Z"),
+    },
+    {
+      name: "Will",
+      avatar: "http://example.com/avatars/will.png",
+      lastMessage: "All set for tomorrow.",
+      username: "will2020",
+      time: new Date("2024-08-24T15:30:30Z"),
+    },
+  ];
+  const [isScrollable, setIsScrollable] = useState(false);
+  const contentRef = useRef(null);
 
-  const timeAgo = new TimeAgo("en-US");
-  const { isPending, isSuccess, isError, isIdle, isPaused, mutate } =
-    useMutation({
-      mutationFn: async ({ username }: { username: string }) => {
-        const session = getAccessToken();
-        const api = await getApiClient(session);
-        const res = await api.room.getRoomInformation({ username });
-        return res.data;
-      },
-      mutationKey: ["getRoomInformation"],
-      onError: async (error) => {
-        const err = error as Error;
-        if (err instanceof ApiError) {
-          const msg = err.body;
-          for (const [key, value] of Object.entries(msg)) {
-            showErrorToast(`${titleize(key)}: ${value}`);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
-          return;
-        } else {
-          showErrorToast(err.message);
-        }
-      },
-      onSuccess: async (res) => {
-        setData(res);
-        window.history.pushState(null, "", `/chat/${res.username}`);
-      },
-    });
   useEffect(() => {
-    if (isPending) {
-      setIsLoading(true);
+    if (contentRef.current) {
+      const { scrollHeight, clientHeight } = contentRef.current;
+      setIsScrollable(scrollHeight > clientHeight);
     }
-  }, [isPending, setIsLoading]);
-  useEffect(() => {
-    if (isSuccess || isError || isIdle || isPaused) {
-      setIsLoading(false);
-    }
-  }, [isError, isIdle, isPaused, isPending, isSuccess, setIsLoading]);
+  }, [data]);
+
   return (
-    <Card style={{ height: "100%" }}>
-      <div
-        className="overflow-y-scroll h-full"
-        style={{ height: "calc(100vh - 160px)" }}
-      >
+    <Card
+      className={`flex-1 flex flex-col h-full ${isScrollable ? "pb-10" : ""}`}
+      radius="none"
+    >
+      <div ref={contentRef} className="flex-1 overflow-y-scroll h-full">
         {data.length > 0 ? (
-          data.map((data, index) => (
-            <div
-              className="flex justify-between items-center p-3 ring-1 ring-primary-100 cursor-pointer"
-              key={index}
-              onClick={() => {
-                mutate({ username: data.username });
-              }}
-            >
-              <div className="">
-                <Avatar
-                  src={
-                    data.avatar || `https://api.dicebear.com/8.x/pixel-art/png`
-                  }
-                  name={data.name}
-                />
-              </div>
-              <div className="flex items-center flex-col gap-0.5 justify-between w-full">
-                <div className="flex w-full text-start pl-2 items-center justify-between gap-1">
-                  <h1 className="text-pretty text-sm  font-poppins tracking-wide overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[150px]">
-                    {data.name}
-                  </h1>
-                  {/* <div className="flex items-start  gap-2 ">
-                    <h1 className="text-[0.6rem] overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[200px]  ">
-                      {data.time && timeAgo.format(new Date(data.time))}
-                    </h1>
-                    <Star className="h-4 w-4" />
-                  </div> */}
-                </div>
-                <div className="flex items-center pl-2 justify-between w-full ">
-                  <h3 className="text-xs text-slate-400 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[200px]  ">
-                    {data.lastMessage}
-                  </h3>
-                  {/* {Math.random() < 0.5 ? (
-                    <div className="h-3 w-3 bg-emerald-500 rounded-full" />
-                  ) : (
-                    <div className="h-3 w-3 bg-slate-700 rounded-full" />
-                  )} */}
-                </div>
-              </div>
-            </div>
-          ))
+          data.map((data) => <DisplayChat data={data} key={data.username} />)
         ) : (
-          <>
-            <h1 className="tracking-widest  flex items-center justify-center text-lg outline-2 ">
-              No Chat found
-            </h1>
-          </>
+          <h1 className="tracking-widest flex items-center justify-center text-lg">
+            No Chat found
+          </h1>
         )}
       </div>
     </Card>

@@ -64,6 +64,20 @@ export class ApiClient {
               return Promise.reject(refreshError);
             }
           }
+          if (status === 404) {
+            const apiError = new ApiError(
+              error.response,
+              {
+                ok: false,
+                url: originalRequest.url!,
+                status,
+                statusText: error.response.statusText,
+                body: { message: "Invalid Api" },
+              },
+              JSON.stringify(error.response.data, null, 2)
+            );
+            return Promise.reject(apiError);
+          }
           const apiError = new ApiError(
             error.response,
             {

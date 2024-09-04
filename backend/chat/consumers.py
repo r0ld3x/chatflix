@@ -34,11 +34,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         user = UserSerializer(self.scope.get("user"))
         data = {
-            "status": "success",
             "message_id": new_message.id,
-            "message": new_message.content,
+            "content": new_message.content,
             "created": new_message.created.isoformat(),
-            "user": user.data,
+            "sender": user.data,
         }
         # await self.send(
         #     text_data=json.dumps(

@@ -14,8 +14,8 @@ const MessageInput = ({ disabled }: MessageInputProps) => {
     useContext(SocketContext);
 
   return (
-    <div className="container">
-      <div className="absolute bottom-3 container  left-0 flex w-full">
+    <div className="container py-4">
+      <div className="w-full">
         <Textarea
           rows={1}
           ref={textAreaRef}
@@ -54,10 +54,10 @@ const MessageInput = ({ disabled }: MessageInputProps) => {
           disabled={
             isLoading || state !== ReadyState.OPEN || !isOpen || disabled
           }
-          placeholder="Enter your question"
+          placeholder="Enter your message"
         />
       </div>
-      <div className="absolute bottom-20 left-0 flex w-full">
+      <div className="">
         <Divider className="" />
       </div>
     </div>

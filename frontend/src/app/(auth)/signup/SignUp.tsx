@@ -12,7 +12,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { isPending, isSuccess, mutate, mutateAsync } = useMutation({
+  const { isPending, isSuccess, mutate, isError, isIdle } = useMutation({
     mutationFn: async ({
       email,
       password,
@@ -84,6 +84,7 @@ const SignUp = () => {
         isDisabled={
           isPending ||
           isSuccess ||
+          (isIdle && isError) ||
           !email ||
           email.length < 1 ||
           !password ||

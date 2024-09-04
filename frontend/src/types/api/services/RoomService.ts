@@ -1,5 +1,9 @@
 import { AxiosInstance, AxiosResponse } from "axios";
-import { RoomCreator, getRoomInformation } from "../models/RoomTypes";
+import {
+  RoomCreator,
+  getMembers,
+  getRoomInformation,
+} from "../models/RoomTypes";
 
 export interface HttpResponse<T> {
   status: number;
@@ -49,7 +53,7 @@ export class RoomsService {
     });
   }
 
-  public async getRoomInformation({
+  public async getInformation({
     username,
   }: {
     username?: string;
@@ -58,7 +62,7 @@ export class RoomsService {
       params: { username },
     });
   }
-  public async JoinRoom({
+  public async join({
     unique_identifier,
     get_info = false,
   }: {
@@ -72,16 +76,34 @@ export class RoomsService {
         get_info,
       };
     }
+
     return this.axios.get(`/room/join_room/${unique_identifier}/`, {
       params,
     });
   }
-  public async CreateJoinRoomLink({ username }: { username: string }): Promise<
+  public async createInviteLink({ username }: { username: string }): Promise<
     AxiosResponse<{
       link: string;
       identifier: string;
     }>
   > {
     return this.axios.get(`/room/generate_link/${username}/`, {});
+  }
+  public async getMembers({
+    username,
+    pageParam,
+    page_size,
+  }: {
+    username: string;
+    pageParam: number;
+    page_size?: number;
+  }): Promise<AxiosResponse<getMembers>> {
+    return this.axios.get("/room/get_members/", {
+      params: {
+        username,
+        page: pageParam !== 0 ? pageParam : 1,
+        page_size,
+      },
+    });
   }
 }

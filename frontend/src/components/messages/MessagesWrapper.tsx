@@ -35,7 +35,7 @@ const MessageWrapper = ({
     mutationFn: async ({ username }: { username: string }) => {
       const session = getAccessToken();
       const api = getApiClient(session);
-      const res = await api.room.getRoomInformation({ username });
+      const res = await api.room.getInformation({ username });
       return res.data;
     },
     mutationKey: ["getRoomInformation"],
@@ -60,29 +60,17 @@ const MessageWrapper = ({
 
   useEffect(() => {
     setIsLoading(isPending);
-
-    if (isSuccess) {
-      setIsLoading(false);
-    }
-
-    if (isError) {
-      setIsLoading(false);
-    }
-
-    if (isIdle || isPaused) {
-      setIsLoading(false);
-    }
-  }, [isPending, isSuccess, isError, isIdle, isPaused, setIsLoading]);
+  }, [isPending]);
 
   useEffect(() => {
     if (username) {
       mutate({ username });
     }
-  }, [username, mutate]);
+  }, [username]);
 
   if (isLoading || isPending) {
     return (
-      <div className="h-[calc(100vh-160px)] flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <Spinner label="Loading..." />
       </div>
     );
@@ -90,7 +78,7 @@ const MessageWrapper = ({
 
   if (!data) {
     return (
-      <div className="h-[calc(100vh-160px)] flex items-center justify-center flex-col">
+      <div className="flex-1 flex items-center justify-center flex-col h-full">
         <div className="p-6 ring-1 ring-slate-400 rounded-md">
           <MessageSquareOff size={60} className="text-red-500" />
         </div>
@@ -103,23 +91,26 @@ const MessageWrapper = ({
   }
 
   return (
-    <div className="relative min-h-full bg-zinc-50 dark:bg-slate-900 dark:text-white  divide-y divide-zinc-200 flex-col justify-between gap-2 h-[calc(100vh-3.5rem)] ">
-      <div className="flex-1 justify-between flex flex-col ">
+    <div className="flex flex-col flex-1 bg-zinc-50 dark:bg-slate-900 dark:text-white divide-y divide-zinc-200 h-full pb-16">
+      {/* Header Section */}
+      <div className="flex-shrink-0">
         <MessageHeader data={data} />
-        <Divider className="mt-3" />
-        <SocketContextProvider
-          roomUsername={username ?? data.username ?? response?.username}
-        >
-          <>
-            <div className="flex-1 justify-between flex flex-col container pr-0">
-              <Messages />
-            </div>
-            <div className="">
-              <MessageInput />
-            </div>
-          </>
-        </SocketContextProvider>
+        <Divider className="" />
       </div>
+
+      {/* Main Content and Footer */}
+      {/* <div className="flex-1 flex flex-col"> */}
+      <SocketContextProvider
+        roomUsername={username ?? data.username ?? response?.username}
+      >
+        <div className="flex-1 overflow-auto">
+          <Messages />
+        </div>
+        <div className="flex-shrink-0">
+          <MessageInput />
+        </div>
+      </SocketContextProvider>
+      {/* </div> */}
     </div>
   );
 };

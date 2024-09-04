@@ -33,42 +33,35 @@ const Messages = () => {
 
   useEffect(() => {
     fetchUser();
-  }, [fetchUser]);
+  }, []);
 
-  const { messages, state } = useContext(SocketContext);
+  const { messages, state, fetchNextPage } = useContext(SocketContext);
 
   return (
-    <>
-      <div className="flex items-center gap-4 flex-col relative">
-        {ReadyState.OPEN !== state && (
-          <div className="absolute top-2 left-50 transform-cpu transition-transform ease-in-out duration-400">
-            <Chip
-              color="primary"
-              className=" bg-current/20 ring-1 ring-blue-500"
-            >
-              Current status is {ReadyState[state]}
-            </Chip>
-          </div>
-        )}
-        <div className="flex w-full gap-4 flex-col h-[calc(100vh-220px)] overflow-y-scroll pr-[2rem]">
-          {/* <p
-            className="font-serif tracking-widest text-tiny w-full text-center hover:underline"
-            onClick={fetchNextPage}
-          >
-            load more chats...
-          </p> */}
-          {messages.map((message, i) => (
-            <>
-              <Message
-                message={message}
-                isSamePerson={message.user.username === user?.username}
-                key={i}
-              />
-            </>
-          ))}
+    <div className="flex items-center gap-4 flex-col relative ">
+      {ReadyState.OPEN !== state && (
+        <div className="absolute top-2 left-50 transform-cpu transition-transform ease-in-out duration-400">
+          <Chip color="primary" className=" bg-current/20 ring-1 ring-blue-500">
+            Current status is {ReadyState[state]}
+          </Chip>
         </div>
+      )}
+      <div className="flex w-full flex-col flex-1 overflow-y-scroll h-full py-2">
+        <p
+          className="font-serif tracking-widest text-tiny w-full text-center hover:underline cursor-pointer"
+          onClick={fetchNextPage}
+        >
+          load more messages...
+        </p>
+        {messages.map((message) => (
+          <Message
+            message={message}
+            isSamePerson={message.sender.username === user?.username}
+            key={message.id}
+          />
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 

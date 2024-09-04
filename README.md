@@ -58,7 +58,7 @@ A **Chat app** which mainly focuses on **privacy** and **enjoyments** and also i
     pip install -r requirements.txt
     ```
 
-4.  Rename [.env.example](https://github.com/r0ld3x/chatflix-frontend/blob/master/.env.example) to `.env` in the root of the frontend directory and add the necessary environment variables.
+4.  Fill core/settings.py especially resend api.
 
 5.  Apply the database migrations:
 
@@ -78,8 +78,7 @@ Once both the frontend and backend servers are running, you should be able to ac
 
 ## Screenshots
 
-![App Screenshot](https://github.com/r0ld3x/chatflix/assets/77254818/d6dbc62f-4b0e-40c6-89be-41717cf28f96)
-
+![Screen Shot](https://github.com/user-attachments/assets/1e9ef121-ccb6-4f2b-9742-3f3276851396)
 
 ## Authors
 

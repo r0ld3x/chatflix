@@ -1,0 +1,6 @@
+__pycache__
+env/
+profile_pics/
+db.sqlite3
+.vscode/
+.env

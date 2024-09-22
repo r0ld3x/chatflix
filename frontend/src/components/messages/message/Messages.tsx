@@ -2,8 +2,9 @@ import { showErrorToast } from "@/components/ShowToast";
 import { getApiClient } from "@/lib/api";
 import { getAccessToken } from "@/lib/helper";
 import { RetrieveUserResponse } from "@/types/api/models/UserServiceTypes";
-import { Chip } from "@nextui-org/react";
+import { Chip, Spinner } from "@nextui-org/react";
 import { useCallback, useContext, useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import { ReadyState } from "react-use-websocket";
 import { SocketContext } from "../socket/SocketContent";
 import Message from "./Message";
@@ -25,7 +26,6 @@ const Messages = () => {
         }
       } catch (error) {
         showErrorToast("Failed to fetch user information.");
-        console.error("Error fetching user:", error);
       }
     };
     getUser();
@@ -35,7 +35,18 @@ const Messages = () => {
     fetchUser();
   }, []);
 
-  const { messages, state, fetchNextPage } = useContext(SocketContext);
+  const { messages, state, fetchNextPage, hasNextPage } =
+    useContext(SocketContext);
+  const { ref, inView } = useInView({
+    fallbackInView: true,
+    initialInView: true,
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && state === ReadyState["OPEN"]) {
+      fetchNextPage();
+    }
+  }, [inView]);
 
   return (
     <div className="flex items-center gap-4 flex-col relative ">
@@ -47,12 +58,18 @@ const Messages = () => {
         </div>
       )}
       <div className="flex w-full flex-col flex-1 overflow-y-scroll h-full py-2">
-        <p
-          className="font-serif tracking-widest text-tiny w-full text-center hover:underline cursor-pointer"
-          onClick={fetchNextPage}
-        >
-          load more messages...
-        </p>
+        {hasNextPage && (
+          <>
+            <div
+              className=" cursor-pointer flex w-full items-center justify-center py-2"
+              onClick={fetchNextPage}
+              ref={ref}
+            >
+              <Spinner label="loading more messages" />
+            </div>
+            <div className="mt-14"></div>
+          </>
+        )}
         {messages.map((message) => (
           <Message
             message={message}

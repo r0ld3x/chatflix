@@ -27,6 +27,7 @@ type StreamResponse = {
   isLoading: boolean;
   isOpen: boolean;
   state: ReadyState;
+  hasNextPage: boolean;
   fetchNextPage: () => void;
 };
 
@@ -39,6 +40,7 @@ export const SocketContext = createContext<StreamResponse>({
   isOpen: false,
   state: ReadyState.CONNECTING,
   fetchNextPage: () => {},
+  hasNextPage: true,
 });
 
 interface Props {
@@ -177,6 +179,7 @@ export const SocketContextProvider = ({ roomUsername, children }: Props) => {
         state,
         messages,
         fetchNextPage: handleNextPage,
+        hasNextPage,
       }}
     >
       {children}

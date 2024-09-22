@@ -22,14 +22,9 @@ const MessageWrapper = ({
   username?: string | null;
 }) => {
   const { data, isLoading, setData, setIsLoading } = useContext(MessageContext);
-
   const {
     isPending,
-    isSuccess,
-    isError,
     mutate,
-    isIdle,
-    isPaused,
     data: response,
   } = useMutation({
     mutationFn: async ({ username }: { username: string }) => {
@@ -99,10 +94,7 @@ const MessageWrapper = ({
       </div>
 
       {/* Main Content and Footer */}
-      {/* <div className="flex-1 flex flex-col"> */}
-      <SocketContextProvider
-        roomUsername={username ?? data.username ?? response?.username}
-      >
+      <SocketContextProvider roomUsername={data.username}>
         <div className="flex-1 overflow-auto">
           <Messages />
         </div>

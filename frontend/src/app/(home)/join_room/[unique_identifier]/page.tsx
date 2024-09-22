@@ -20,7 +20,7 @@ const Page = async ({
 
   const apiClient = getApiClient(session);
   try {
-    const res = await apiClient.room.JoinRoom({
+    const res = await apiClient.room.join({
       unique_identifier,
       get_info: true,
     });

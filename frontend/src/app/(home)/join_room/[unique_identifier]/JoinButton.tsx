@@ -15,7 +15,7 @@ const JoinButton = ({ unique_identifier }: { unique_identifier: string }) => {
     }) => {
       const session = getAccessToken();
       const api = await getApiClient(session);
-      const res = await api.room.JoinRoom({ unique_identifier });
+      const res = await api.room.join({ unique_identifier });
       return res.data;
     },
     mutationKey: ["join-room"],

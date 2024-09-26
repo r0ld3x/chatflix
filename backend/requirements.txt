@@ -4,3 +4,9 @@ djangorestframework-simplejwt
 djoser
 django-cors-headers
 channels[daphne]
+gunicorn 
+pillow
+python-dotenv
+psycopg2-binary
+channels-redis
+django-redis

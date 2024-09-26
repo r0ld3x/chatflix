@@ -4,3 +4,5 @@ profile_pics/
 db.sqlite3
 .vscode/
 .env
+.env.prod
+static

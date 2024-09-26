@@ -31,13 +31,19 @@ A **Chat app** which mainly focuses on **privacy** and **enjoyments** and also i
 
 4.  Rename [.env.example](https://github.com/r0ld3x/chatflix-frontend/blob/master/.env.example) to `.env` in the root of the frontend directory and add the necessary environment variables.
 
-5.  Apply the database migrations:
+## Docker
+
+    docker-compose up --build
+
+## Manually
+
+1.  Apply the database migrations:
 
     ```
     python manage.py migrate
     ```
 
-6.  Start the Django development server:
+2.  Start the Django development server:
 
     ```
     python manage.py runserver
